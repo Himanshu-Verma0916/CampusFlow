@@ -33,7 +33,7 @@ const approveContent=async(req,res)=>{
         }
 
         if(content.status === "approved"){
-            return res.json({success:false, message:"Content is laready approved"});
+            return res.json({success:false, message:"Content is already approved"});
         }
 
         if(content.status ==="rejected"){
@@ -41,7 +41,7 @@ const approveContent=async(req,res)=>{
         }
 
         content.status="approved";
-        content.aaprovedBy=req.user.id;
+        content.approvedBy=req.user.id;
 
         await content.save();
 

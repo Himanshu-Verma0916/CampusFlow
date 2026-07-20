@@ -1,8 +1,25 @@
 import React from 'react';
-import {LayoutDashboard,Upload,FileText,Radio,BarChart3,Settings,X} from 'lucide-react';
+import { LayoutDashboard, Upload, FileText, Radio, BarChart3, Settings, X, LogOut } from 'lucide-react';
 import { campusIcon } from '../assets/assets';
+import { useNavigate } from 'react-router-dom';
+
+import { useAppContext } from '../context/AppContext';
 
 const Sidebar = ({ sidebar, setSidebar }) => {
+  const navigate = useNavigate();
+
+  const { user, logout } = useAppContext();
+  const isAdmin = user?.role === 'admin';
+  const isStudent = user?.role === "student";
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate("/login", { replace: true });
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <>
@@ -36,7 +53,7 @@ const Sidebar = ({ sidebar, setSidebar }) => {
               </h1>
 
               <p className='text-xs text-gray-400'>
-               Smart campus broadcasting system
+                Smart campus broadcasting system
               </p>
 
             </div>
@@ -57,7 +74,7 @@ const Sidebar = ({ sidebar, setSidebar }) => {
         <div className='flex flex-col gap-2 p-4 text-sm font-medium'>
 
           {/* DASHBOARD */}
-          <button className='flex items-center gap-3 bg-indigo-700 text-white px-4 py-3 rounded-md'>
+          <button  onClick={() => navigate('/')} className='flex items-center gap-3 bg-indigo-700 text-white px-4 py-3 rounded-md'>
 
             <LayoutDashboard className='w-5 h-5' />
 
@@ -66,36 +83,46 @@ const Sidebar = ({ sidebar, setSidebar }) => {
           </button>
 
           {/* UPLOAD CONTENT */}
-          <button className='flex items-center gap-3 px-4 py-3 rounded-xl shadow-sm hover:scale-110 hover:bg-gray-700 hover:text-white transition-all'>
+          <button disabled={isStudent} disabled={isAdmin} onClick={() => !isStudent && !isAdmin && navigate('/upload')} className='flex items-center gap-3 px-4 py-3 rounded-xl shadow-sm hover:scale-110 hover:bg-gray-700 hover:text-white transition-all'>
             <Upload className='w-5 h-5' />
             <p>Upload Content</p>
           </button>
 
           {/* MY CONTENT */}
-          <button className='flex items-center gap-3 px-4 py-3 rounded-xl shadow-sm hover:scale-110 hover:bg-gray-700 hover:text-white transition-all'>
+          <button disabled={isStudent} disabled={isAdmin} onClick={() => !isStudent && !isAdmin && navigate('/my-content')} className='flex items-center gap-3 px-4 py-3 rounded-xl shadow-sm hover:scale-110 hover:bg-gray-700 hover:text-white transition-all'>
             <FileText className='w-5 h-5' />
             <p>My Content</p>
           </button>
 
-          {/* BROADCASTS */}
-          <button className='flex items-center gap-3 px-4 py-3 rounded-xl shadow-sm hover:scale-110 hover:bg-gray-700 hover:text-white transition-all'>
-            <Radio className='w-5 h-5' />
-            <p>Broadcasts</p>
-          </button>
-
           {/* ANALYTICS */}
-          <button className='flex items-center gap-3 px-4 py-3 rounded-xl shadow-sm hover:scale-110 hover:bg-gray-700 hover:text-white transition-all'>
+          <button disabled={isStudent} disabled={isAdmin} onClick={() =>!isStudent && !isAdmin && navigate('/analytics')} className='flex items-center gap-3 px-4 py-3 rounded-xl shadow-sm hover:scale-110 hover:bg-gray-700 hover:text-white transition-all'>
             <BarChart3 className='w-5 h-5' />
             <p>Analytics</p>
           </button>
 
           {/* SETTINGS */}
-          <button className='flex items-center gap-3 px-4 py-3 rounded-xl shadow-sm hover:scale-110 hover:bg-gray-700 hover:text-white transition-all'>
+          <button  onClick={() =>navigate('/settings')} className='flex items-center gap-3 px-4 py-3 rounded-xl shadow-sm hover:scale-110 hover:bg-gray-700 hover:text-white transition-all'>
             <Settings className='w-5 h-5' />
             <p>Settings</p>
           </button>
 
+          {
+            user && (
+              <div className="flex flex-col h-[calc(100%-88px)]">
+                <button onClick={() => { handleLogout() }}
+                  className="flex items-center text-red-700 gap-3 px-4 py-3 rounded-xl shadow-sm hover:scale-110 hover:bg-red-600 hover:text-white transition-all"
+                >
+                  <LogOut className="w-5 h-5" />
+                  <span>Logout</span>
+                </button>
+              </div>
+            )
+          }
+
+
+
         </div>
+
 
       </div>
 

@@ -7,10 +7,21 @@ import 'react-toastify/dist/ReactToastify.css'
 import Navbar from './components/Navbar'
 import Sidebar from './components/Sidebar'
 import Dashboard from './pages/Dashboard'
+import Login from './pages/Login'
+import Register from './pages/Register'
+import UploadContent from './pages/UploadContent'
+import StudentDashboard from './pages/StudentDashBoard'
+import MyContent from './pages/MyContent'
+import Analytics from './pages/Analytics'
+import Setting from './pages/Setting'
+
+import { useAppContext } from './context/AppContext';
+
 
 const App = () => {
 
-  const [sidebar, setSidebar] = useState(false)
+  const [sidebar, setSidebar] = useState(false);
+  const { user } = useAppContext();
 
   return (
 
@@ -30,13 +41,13 @@ const App = () => {
 
           <Routes>
 
-            <Route path='/' element={<Dashboard/>} />  
-            {/* <Route path='/upload' element={<h1 className='text-4xl font-bold text-gray-800'>Upload Content</h1>} />
-            <Route path='/my-content' element={<h1 className='text-4xl font-bold text-gray-800'>My Content</h1>} />
-            <Route path='/broadcasts' element={<h1 className='text-4xl font-bold text-gray-800'>Broadcasts</h1>} />
-            <Route path='/analytics' element={<h1 className='text-4xl font-bold text-gray-800'>Analytics</h1>} />
-            <Route path='/settings' element={<h1 className='text-4xl font-bold text-gray-800'>Settings</h1>} /> */}
-
+            <Route path='/' element={user?.role === 'student' ? <StudentDashboard /> : <Dashboard />} />
+            <Route path='/login' element={<Login/>}/>
+            <Route path='/register' element={<Register/>}/>
+            <Route path='/upload' element={<UploadContent />} />
+            <Route path='/my-content' element={<MyContent />} />
+            <Route path='/analytics' element={<Analytics />} />
+            <Route path='/settings' element={<Setting />} />
           </Routes>
 
         </div>

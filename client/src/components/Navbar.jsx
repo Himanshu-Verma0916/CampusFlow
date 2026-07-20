@@ -2,7 +2,14 @@ import React from 'react';
 import { Bell, Search, Menu } from 'lucide-react';
 import { campusIcon, admin } from '../assets/assets';
 
+import { useAppContext } from '../context/AppContext';
+import { useNavigate } from 'react-router-dom';
+
 const Navbar = ({ setSidebar }) => {
+    const { user, logout } = useAppContext();
+    const navigate = useNavigate();
+    
+  const isStudent = user?.role === "student";
 
     return (
 
@@ -20,16 +27,16 @@ const Navbar = ({ setSidebar }) => {
                 </button>
 
                 {/* LOGO + TITLE */}
-                <div className='flex items-center gap-3'>
+                <div onClick={() => navigate('/')} className='flex items-center gap-3 cursor-pointer'>
 
-                    <div className='w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-lg'>
-                      <img src={campusIcon} alt='Campus Icon' />
-                        
+                    <div className='w-15 h-15 rounded-xl flex items-center justify-center text-white font-bold text-lg'>
+                        <img src={campusIcon} alt='Campus Icon' />
+
                     </div>
 
                     <div className='hidden sm:block'>
-                        <h1 className='text-[16px] font-semibold text-gray-800'>
-                            CampusFlow 
+                        <h1 className='text-[16px] font-semibold text-gray-800 cursor-pointer'>
+                            CampusFlow
                         </h1>
 
                         <p className='text-xs text-gray-500'>
@@ -42,17 +49,17 @@ const Navbar = ({ setSidebar }) => {
             </div>
 
             {/* CENTER LINKS */}
-            <div className='hidden lg:flex items-center gap-8 text-sm font-medium text-gray-500'>
+            <div className='hidden lg:flex items-center gap-30 text-sm font-medium text-gray-500'>
 
-                <p className='cursor-pointer hover:text-indigo-600 hover:scale-110 transition-all'>
+                <p onClick={()=>{ navigate('/')}} className='cursor-pointer hover:text-indigo-600 hover:scale-110 transition-all'>
                     Overview
                 </p>
 
-                <p className='cursor-pointer hover:text-indigo-600 hover:scale-110 transition-all'>
+                <p disabled={isStudent} onClick={()=>{ !isStudent && navigate('/analytics')}} className='cursor-pointer hover:text-indigo-600 hover:scale-110 transition-all'>
                     Workflows
                 </p>
 
-                <p className='cursor-pointer hover:text-indigo-600 hover:scale-110 transition-all'>
+                <p disabled={isStudent}  onClick={()=>{ !isStudent && navigate('/my-content')}} className='cursor-pointer hover:text-indigo-600 hover:scale-110 transition-all'>
                     Docs
                 </p>
 
@@ -61,48 +68,57 @@ const Navbar = ({ setSidebar }) => {
             {/* RIGHT SECTION */}
             <div className='flex items-center gap-3'>
 
-                {/* SEARCH BAR */}
-                <div className='hidden md:flex items-center bg-gray-100 px-4 py-2 rounded-full w-[260px]'>
-
-                    <Search className='w-4 h-4 text-gray-400' />
-
-                    <input
-                        type='text'
-                        placeholder='Search content, teachers, subjects'
-                        className='bg-transparent outline-none border-none text-sm ml-2 w-full placeholder:text-gray-400'
-                    />
-
-                </div>
-
-                {/* NOTIFICATION */}
-                <button className='w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-100 transition-all'>
-
-                    <Bell className='w-5 h-5 text-gray-600' />
-
-                </button>
-
                 {/* PROFILE */}
-                <div className='flex items-center gap-3 ml-2 cursor-pointer'>
+                {user ? (
+                    <div className="relative group ml-2">
 
-                    <img
-                        src={admin}
-                        alt='profile'
-                        className='w-10 h-10 rounded-full object-cover'
-                    />
+                        {/* Trigger */}
+                        <div className="cursor-pointer text-right">
+                            <h2 className="text-sm font-semibold text-gray-800">
+                                Welcome, {user.name}
+                            </h2>
 
-                    <div className='hidden md:block leading-tight'>
+                            <p className="text-xs text-gray-500 capitalize">
+                                {user.role}
+                            </p>
+                        </div>
 
-                        <h2 className='text-sm font-semibold text-gray-800'>
-                            Himanshu Verma
-                        </h2>
+                        {/* Dropdown */}
+                        <div className="absolute right-0 mt-3 w-48 bg-white border border-gray-200 rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
 
-                        <p className='text-xs text-gray-500'>
-                            Admin
-                        </p>
+                            <button
+                                onClick={async () => {
+                                    await logout();
+                                    navigate("/login");
+                                }}
+                                className="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 rounded-b-xl transition"
+                            >
+                                Logout
+                            </button>
+
+                        </div>
 
                     </div>
+                ) : (
+                    <div className="flex items-center gap-3">
 
-                </div>
+                        <button
+                            onClick={() => navigate("/register")}
+                            className="hidden sm:block px-4 py-2 text-sm font-medium border border-indigo-600 text-indigo-600 rounded-lg hover:bg-indigo-50 transition"
+                        >
+                            Create Account
+                        </button>
+
+                        <button
+                            onClick={() => navigate("/login")}
+                            className="px-5 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium transition"
+                        >
+                            Login
+                        </button>
+
+                    </div>
+                )}
+
 
             </div>
 

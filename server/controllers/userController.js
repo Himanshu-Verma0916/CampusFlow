@@ -8,6 +8,14 @@ const generateToken=(id, role)=>{
     return jwt.sign({id,role}, process.env.JWT_SECRET, {expiresIn:'7d'})
 };
 
+// cookie options
+const cookieOptions={
+    httpOnly:true,
+    secure: process.env.NODE_ENV === 'production', // set to true in production
+    sameSite: 'strict',
+    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+}
+
 // Register user
 
 const registerUser= async(req,res)=>{
@@ -37,7 +45,7 @@ const registerUser= async(req,res)=>{
         
         const token = generateToken(user._id, user.role);
 
-        res.status(201).json({success:true, message:"Registration Successfully", token, user:{id:user._id,name:user.name,email:user.email,role:user.role}});
+        res.cookie("token", token, cookieOptions).status(201).json({success:true, message:"Registration Successfully",  user:{id:user._id,name:user.name,email:user.email,role:user.role}});
 
     } catch (error) {
         console.log(error);
@@ -69,7 +77,7 @@ const loginUser =async(req,res)=>{
 
         const token =generateToken(user._id, user.role);
 
-        res.status(200).json({success:true, message:"Login successful", token, user:{id:user._id,name:user.name,email:user.email,role:user.role}})
+        res.cookie("token", token, cookieOptions).status(200).json({success:true, message:"Login successful", user:{id:user._id,name:user.name,email:user.email,role:user.role}})
         
     } catch (error) {
         console.log(error);
@@ -94,5 +102,13 @@ const getProfile= async(req,res)=>{
         res.status(500).json({success:false, message:error.message}); 
     }
 }
+const logoutUser= async(req,res)=>{
+    try {
+        res.clearCookie("token", cookieOptions).status(200).json({success:true, message:"Logout successful"});
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({success:false, message:error.message});
+    }
+}
 
-module.exports={registerUser, loginUser, getProfile};
+module.exports={registerUser, loginUser, getProfile, logoutUser};

@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 require('dotenv').config();
 const connectDB = require('./config/dbConnection');
+const cookieParser = require('cookie-parser');
 
 connectDB();
 const https = require('https');
@@ -20,9 +21,15 @@ const limiter = rateLimit({
     max: 100 // limit each IP to 100 requests per windowMs
 });
 
-app.use(helmet());
-app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
+app.use(helmet());
 app.use(limiter);
 
 
