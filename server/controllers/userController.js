@@ -9,12 +9,12 @@ const generateToken=(id, role)=>{
 };
 
 // cookie options
-const cookieOptions={
-    httpOnly:true,
-    secure: process.env.NODE_ENV === 'production', // set to true in production
-    sameSite: 'strict',
-    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
-}
+const cookieOptions = {
+    httpOnly: true,
+    secure: true,          // Always true on Vercel (HTTPS)
+    sameSite: "none",      // <-- IMPORTANT
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+};
 
 // Register user
 
@@ -104,7 +104,7 @@ const getProfile= async(req,res)=>{
 }
 const logoutUser= async(req,res)=>{
     try {
-        res.clearCookie("token", cookieOptions).status(200).json({success:true, message:"Logout successful"});
+        res.clearCookie("token",{httpOnly: true, secure: true, sameSite:"none"}).status(200).json({success:true, message:"Logout successful"});
     } catch (error) {
         console.log(error);
         res.status(500).json({success:false, message:error.message});
