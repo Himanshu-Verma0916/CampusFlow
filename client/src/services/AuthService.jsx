@@ -58,7 +58,7 @@ const getProfile = async () => {
     })
     const user = await response.json();
     if (!response.ok) {
-      throw new Error(data.message || "Something went wrong");
+      throw new Error(user.message || "Something went wrong");
     }
     
     return user;
